@@ -24,6 +24,10 @@ class Puzzle
   ## array syntax.  In the above example, the "6" at position 2,1
   ## would be addressed as array[1][2].
   ##
+  ## Accepts a single Fixnum representing the dimension of the 
+  ## square grid (default 3) or a 2 dimension Array representing
+  ## an existing state.
+  ##
   def initialize(arg = 3)
     @tiles = arg.is_a?(Array) ? arg : generate_solved_array(arg)
     @moves = 0
