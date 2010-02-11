@@ -1,6 +1,7 @@
 
 class Puzzle
   attr_reader :tiles
+  attr_reader :hole
 
   class InvalidMove < Exception; end
 
@@ -30,18 +31,8 @@ class Puzzle
   ##
   def initialize(arg = 3)
     @tiles = arg.is_a?(Array) ? arg : generate_solved_array(arg)
+    @hole  = find_hole
     @moves = 0
-  end
-
-  ##
-  ## Returns the x,y coordinates of the hole as an array
-  ##
-  def hole
-    @tiles.size.times do |x|
-      @tiles.size.times do |y|
-        return [x,y] if @tiles[y][x].nil?
-      end
-    end
   end
 
   ##
@@ -49,18 +40,18 @@ class Puzzle
   ## current state of the puzzle
   ##
   def available_moves
-    adjacent_tiles(*self.hole)
+    adjacent_tiles(*@hole)
   end
 
   ##
   ## Pass the x,y coordinates of the tile to swap with the hole
   ##
   def move(dx, dy)
-    hole = self.hole
-    unless adjacent_tiles(dx, dy).include?(hole)
-      raise InvalidMove, "#{dx},#{dy} -> #{hole[0]},#{hole[1]}"
+    unless adjacent_tiles(dx, dy).include?(@hole)
+      raise InvalidMove, "#{dx},#{dy} -> #{@hole[0]},#{@hole[1]}"
     end
-    @tiles[dy][dx], @tiles[hole[1]][hole[0]] = @tiles[hole[1]][hole[0]], @tiles[dy][dx]
+    @tiles[dy][dx], @tiles[@hole[1]][@hole[0]] = @tiles[@hole[1]][@hole[0]], @tiles[dy][dx]
+    @hole = [dx, dy]
     @moves += 1
   end
 
@@ -89,7 +80,7 @@ protected
     tiles
   end  
 
-  ## returns list of coordinates
+  ## returns list of coordinates representing adjacent tiles
   def adjacent_tiles(dx, dy)
     tiles = []
     @tiles.size.times do |x|
@@ -101,6 +92,15 @@ protected
       end
     end
     tiles
+  end
+
+  ## returns the x,y coordinates of the hole as an array
+  def find_hole
+    @tiles.size.times do |x|
+      @tiles.size.times do |y|
+        return [x,y] if @tiles[y][x].nil?
+      end
+    end
   end
 
 end
