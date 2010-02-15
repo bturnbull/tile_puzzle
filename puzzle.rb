@@ -1,4 +1,3 @@
-
 class Puzzle
   attr_reader :tiles, :hole, :moves
 
@@ -34,7 +33,7 @@ class Puzzle
   def initialize(arg = 3)
     @tiles = arg.is_a?(Array) ? arg : generate_solved_array(arg)
     @hole  = find_hole
-    @moves = 0
+    @moves = []
   end
 
   ##
@@ -54,7 +53,7 @@ class Puzzle
     end
     @tiles[dy][dx], @tiles[@hole[1]][@hole[0]] = @tiles[@hole[1]][@hole[0]], @tiles[dy][dx]
     @hole = [dx, dy]
-    @moves += 1
+    @moves << @hole
     self
   end
 
@@ -66,13 +65,21 @@ class Puzzle
   ## Shuffle the puzzle.  Necessary since there are unsolvable
   ## configurations of the tiles
   ##
-  def shuffle(iterations = 5000)
+  def shuffle(iterations = 500)
     iterations.times do
       moves = available_moves
       move(*moves[rand(moves.size)])
     end
-    @moves = 0
+    @moves = []
     self
+  end
+
+  def to_s
+    board = ""
+    @tiles.size.times do |x|
+      board += @tiles[x].map {|t| t.nil? ? "XX" : sprintf('%2d', t)}.join(', ') + "\n"
+    end
+    board
   end
 
 protected
