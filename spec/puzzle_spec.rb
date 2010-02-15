@@ -14,6 +14,12 @@ describe 'A default Puzzle' do
     @puzzle.solved?.should be_true
   end
 
+  it 'should be cloneable' do
+    p2 = @puzzle.clone
+    @puzzle.move(2,1)
+    p2.tiles.should_not == @puzzle.tiles
+  end
+
   it 'should have the hole at 2,2' do
     @puzzle.hole.should == [2,2]
   end

@@ -1,12 +1,14 @@
 
 class Puzzle
-  attr_reader :tiles
-  attr_reader :hole
+  attr_reader :tiles, :hole, :moves
 
   class InvalidMove < Exception; end
 
-  def self.clone(puzzle)
-    new(puzzle.tiles)
+  ##
+  ## Make a clone of myself
+  ##
+  def clone
+    Marshal.load(Marshal.dump self)
   end
 
   ##
@@ -53,6 +55,7 @@ class Puzzle
     @tiles[dy][dx], @tiles[@hole[1]][@hole[0]] = @tiles[@hole[1]][@hole[0]], @tiles[dy][dx]
     @hole = [dx, dy]
     @moves += 1
+    self
   end
 
   def solved?
@@ -69,6 +72,7 @@ class Puzzle
       move(*moves[rand(moves.size)])
     end
     @moves = 0
+    self
   end
 
 protected
